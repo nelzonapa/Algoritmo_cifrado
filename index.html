@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,11 @@
     <style>
         /* Aseguramos que todo esté centrado y que el estilo sea gótico */
         @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap');
+
         body {
-            font-family: 'Cinzel Decorative', serif; /* Letra estilo secreto-enigma */            background-color: #f4f4f4;
+            font-family: 'Cinzel Decorative', serif;
+            /* Letra estilo secreto-enigma */
+            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -29,7 +33,8 @@
             font-size: 2.5rem;
         }
 
-        label, textarea {
+        label,
+        textarea {
             display: block;
             margin-top: 10px;
             width: 100%;
@@ -69,23 +74,25 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>One Time Pad Encryption</h1>
-        <p>Introduce tu mensaje y clave para encriptar o desencriptar. La clave debe tener al menos la misma longitud que el mensaje, o bien generar una clave aleatoria segura.</p>
-        
+        <p>Introduce tu mensaje y clave para encriptar o desencriptar. La clave debe tener al menos la misma longitud
+            que el mensaje, o bien generar una clave aleatoria segura.</p>
+
         <label for="message">Mensaje (texto claro o encriptado):</label>
         <textarea id="message" rows="4" placeholder="Introduce el mensaje"></textarea>
-        
+
         <label for="key">Clave (libreta de un solo uso):</label>
         <textarea id="key" rows="4" placeholder="Introduce la clave, o pulsa generar clave aleatoria"></textarea>
-        
+
         <button onclick="generateRandomKey()">Generar clave aleatoria</button>
         <button onclick="encryptMessage()">Encriptar</button>
         <button onclick="decryptMessage()">Desencriptar</button>
-        
+
         <div id="error"></div>
-        
+
         <h2>Resultado:</h2>
         <p id="result"></p>
     </div>
@@ -141,9 +148,11 @@
 
             let result = "";
             for (let i = 0; i < message.length; i++) {
+                // Aplicamos XOR entre los caracteres del mensaje y la clave
                 result += String.fromCharCode(message.charCodeAt(i) ^ key.charCodeAt(i));
             }
-            document.getElementById("result").textContent = "Encriptado: " + btoa(result);
+            // Mostramos directamente el resultado sin codificar en Base64
+            document.getElementById("result").textContent = "Encriptado: " + result;
         }
 
         // Desencriptar usando One Time Pad
@@ -152,22 +161,19 @@
             let encryptedMessage = document.getElementById("message").value;
             let key = document.getElementById("key").value;
 
-            try {
-                // Decodificar el mensaje encriptado desde base64
-                let message = atob(encryptedMessage);
+            // Validar entradas
+            if (!validateInputs(encryptedMessage, key)) return;
 
-                // Validar entradas
-                if (!validateInputs(message, key)) return;
-
-                let result = "";
-                for (let i = 0; i < message.length; i++) {
-                    result += String.fromCharCode(message.charCodeAt(i) ^ key.charCodeAt(i));
-                }
-                document.getElementById("result").textContent = "Desencriptado: " + result;
-            } catch (e) {
-                showError("El formato del mensaje encriptado no es válido o está corrupto.");
+            let result = "";
+            for (let i = 0; i < encryptedMessage.length; i++) {
+                // Aplicamos XOR entre los caracteres del mensaje y la clave
+                result += String.fromCharCode(encryptedMessage.charCodeAt(i) ^ key.charCodeAt(i));
             }
+            // Mostramos el mensaje desencriptado sin decodificar Base64
+            document.getElementById("result").textContent = "Desencriptado: " + result;
         }
+
     </script>
 </body>
+
 </html>
