@@ -137,6 +137,20 @@
             showError("Clave generada correctamente.");
         }
 
+        // Función para convertir texto a hexadecimal (más fácil de visualizar el resultado cifrado)
+        function toHexString(byteArray) {
+            return Array.from(byteArray, byte => ('0' + (byte & 0xFF).toString(16)).slice(-2)).join('');
+        }
+
+        // Función para convertir de hexadecimal a texto
+        function fromHexString(hexString) {
+            let result = '';
+            for (let i = 0; i < hexString.length; i += 2) {
+                result += String.fromCharCode(parseInt(hexString.substring(i, i + 2), 16));
+            }
+            return result;
+        }
+
         // Encriptar usando One Time Pad
         function encryptMessage() {
             clearError();
@@ -146,13 +160,14 @@
             // Validar entradas
             if (!validateInputs(message, key)) return;
 
-            let result = "";
+            let result = [];
             for (let i = 0; i < message.length; i++) {
                 // Aplicamos XOR entre los caracteres del mensaje y la clave
-                result += String.fromCharCode(message.charCodeAt(i) ^ key.charCodeAt(i));
+                result.push(message.charCodeAt(i) ^ key.charCodeAt(i));
             }
-            // Mostramos directamente el resultado sin codificar en Base64
-            document.getElementById("result").textContent = "Encriptado: " + result;
+
+            // Convertimos el resultado a hexadecimal para una visualización correcta
+            document.getElementById("result").textContent = "Encriptado (Hex): " + toHexString(result);
         }
 
         // Desencriptar usando One Time Pad
@@ -164,15 +179,17 @@
             // Validar entradas
             if (!validateInputs(encryptedMessage, key)) return;
 
+            let hexDecodedMessage = fromHexString(encryptedMessage);
             let result = "";
-            for (let i = 0; i < encryptedMessage.length; i++) {
+            for (let i = 0; i < hexDecodedMessage.length; i++) {
                 // Aplicamos XOR entre los caracteres del mensaje y la clave
-                result += String.fromCharCode(encryptedMessage.charCodeAt(i) ^ key.charCodeAt(i));
+                result += String.fromCharCode(hexDecodedMessage.charCodeAt(i) ^ key.charCodeAt(i));
             }
-            // Mostramos el mensaje desencriptado sin decodificar Base64
+
+            // Mostramos el mensaje desencriptado
             document.getElementById("result").textContent = "Desencriptado: " + result;
         }
-
+        
     </script>
 </body>
 
