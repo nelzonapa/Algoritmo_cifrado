@@ -137,21 +137,7 @@
             showError("Clave generada correctamente.");
         }
 
-        // Función para convertir texto a hexadecimal (más fácil de visualizar el resultado cifrado)
-        function toHexString(byteArray) {
-            return Array.from(byteArray, byte => ('0' + (byte & 0xFF).toString(16)).slice(-2)).join('');
-        }
-
-        // Función para convertir de hexadecimal a texto
-        function fromHexString(hexString) {
-            let result = '';
-            for (let i = 0; i < hexString.length; i += 2) {
-                result += String.fromCharCode(parseInt(hexString.substring(i, i + 2), 16));
-            }
-            return result;
-        }
-
-        // Encriptar usando One Time Pad
+        // Función para encriptar usando One Time Pad
         function encryptMessage() {
             clearError();
             let message = document.getElementById("message").value;
@@ -160,36 +146,35 @@
             // Validar entradas
             if (!validateInputs(message, key)) return;
 
-            let result = [];
+            let result = "";
             for (let i = 0; i < message.length; i++) {
                 // Aplicamos XOR entre los caracteres del mensaje y la clave
-                result.push(message.charCodeAt(i) ^ key.charCodeAt(i));
+                result += String.fromCharCode(message.charCodeAt(i) ^ key.charCodeAt(i));
             }
 
-            // Convertimos el resultado a hexadecimal para una visualización correcta
-            document.getElementById("result").textContent = "Encriptado (Hex): " + toHexString(result);
+            // Mostramos directamente el resultado encriptado
+            document.getElementById("result").textContent = "Encriptado: " + btoa(result); // Usamos Base64 para mostrar caracteres especiales
         }
 
-        // Desencriptar usando One Time Pad
+        // Función para desencriptar usando One Time Pad
         function decryptMessage() {
             clearError();
-            let encryptedMessage = document.getElementById("message").value;
+            let encryptedMessage = atob(document.getElementById("message").value); // Decodificamos desde Base64
             let key = document.getElementById("key").value;
 
             // Validar entradas
             if (!validateInputs(encryptedMessage, key)) return;
 
-            let hexDecodedMessage = fromHexString(encryptedMessage);
             let result = "";
-            for (let i = 0; i < hexDecodedMessage.length; i++) {
+            for (let i = 0; i < encryptedMessage.length; i++) {
                 // Aplicamos XOR entre los caracteres del mensaje y la clave
-                result += String.fromCharCode(hexDecodedMessage.charCodeAt(i) ^ key.charCodeAt(i));
+                result += String.fromCharCode(encryptedMessage.charCodeAt(i) ^ key.charCodeAt(i));
             }
 
             // Mostramos el mensaje desencriptado
             document.getElementById("result").textContent = "Desencriptado: " + result;
         }
-        
+
     </script>
 </body>
 
