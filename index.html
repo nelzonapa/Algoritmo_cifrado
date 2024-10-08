@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Time Pad Encryption</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 600px;
+        }
+        label, input {
+            display: block;
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>One Time Pad Encryption</h1>
+    <p>Introduce tu mensaje y clave para encriptar o desencriptar usando One Time Pad. Ambos deben tener la misma longitud.</p>
+    
+    <label for="message">Mensaje:</label>
+    <input type="text" id="message" placeholder="Introduce el mensaje">
+    
+    <label for="key">Clave (debe tener la misma longitud que el mensaje):</label>
+    <input type="text" id="key" placeholder="Introduce la clave">
+    
+    <button onclick="encryptMessage()">Encriptar</button>
+    <button onclick="decryptMessage()">Desencriptar</button>
+    
+    <div id="error"></div>  <!-- Aquí se mostrarán los mensajes de error -->
+    
+    <h2>Resultado:</h2>
+    <p id="result"></p>
+
+    <script>
+        // Función para mostrar mensajes de error
+        function showError(message) {
+            document.getElementById("error").textContent = message;
+        }
+
+        // Función para limpiar errores
+        function clearError() {
+            document.getElementById("error").textContent = "";
+        }
+
+        // Verificación de longitud de mensaje y clave
+        function validateInputs(message, key) {
+            if (!message || !key) {
+                showError("El mensaje y la clave no pueden estar vacíos.");
+                return false;
+            }
+            if (message.length !== key.length) {
+                showError("El mensaje y la clave deben tener la misma longitud.");
+                return false;
+            }
+            return true;
+        }
+
+        // Encriptar usando One Time Pad
+        function encryptMessage() {
+            clearError();  // Limpiar errores previos
+            let message = document.getElementById("message").value;
+            let key = document.getElementById("key").value;
+
+            // Validar entrada
+            if (!validateInputs(message, key)) return;
+
+            let result = "";
+            for (let i = 0; i < message.length; i++) {
+                // XOR entre cada carácter del mensaje y la clave
+                result += String.fromCharCode(message.charCodeAt(i) ^ key.charCodeAt(i));
+            }
+            // Mostrar el resultado encriptado en base64
+            document.getElementById("result").textContent = "Encriptado: " + btoa(result);
+        }
+
+        // Desencriptar usando One Time Pad
+        function decryptMessage() {
+            clearError();  // Limpiar errores previos
+            let encryptedMessage = document.getElementById("message").value;
+            let key = document.getElementById("key").value;
+
+            try {
+                // Decodificar el mensaje encriptado desde base64
+                let message = atob(encryptedMessage);
+
+                // Validar entrada
+                if (!validateInputs(message, key)) return;
+
+                let result = "";
+                for (let i = 0; i < message.length; i++) {
+                    // XOR entre cada carácter del mensaje encriptado y la clave
+                    result += String.fromCharCode(message.charCodeAt(i) ^ key.charCodeAt(i));
+                }
+                document.getElementById("result").textContent = "Desencriptado: " + result;
+            } catch (e) {
+                // Capturar error si el mensaje encriptado no es válido
+                showError("El formato del mensaje encriptado no es válido o está corrupto.");
+            }
+        }
+    </script>
+</body>
+</html>
